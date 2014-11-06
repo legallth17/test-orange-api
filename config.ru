@@ -13,7 +13,7 @@ end
 
 map '/' do
   welcome = proc do |env|
-    [200, { "Content-Type" => "text/html" }, ["My simple empty app #{env}"]]
+    [200, { "Content-Type" => "text/html" }, ["My simple empty app #{env['QUERY_STRING']}"]]
   end
   run welcome
 end
