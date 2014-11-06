@@ -11,7 +11,7 @@ map '/' do
     if check_auth_id then
        [200, { "Content-Type" => "text/html" }, ["My simple empty app. Authorized id = #{check_auth_id[1]}"]]
     else
-       [200, { "Content-Type" => "text/html" }, ["My simple empty app. Authentication is required {env['QUERY_STRING']}"]]
+       [200, { "Content-Type" => "text/html" }, ["My simple empty app. Authentication is required #{env['QUERY_STRING']}"]]
     end       
   end
   run welcome
