@@ -7,11 +7,11 @@ end
 
 map '/' do
   welcome = proc do |env|
-    check_auth_id =  /code=(.*)\?state=authorized$/.match(env['QUERY_STRING'])
+    check_auth_id =  /code=(.*)\?state=ok$/.match(env['QUERY_STRING'])
     if check_auth_id then
        [200, { "Content-Type" => "text/html" }, ["My simple empty app. Authorized id = #{check_auth_id[1]}"]]
     else
-       [200, { "Content-Type" => "text/html" }, ["My simple empty app. Authentication is required"]]
+       [200, { "Content-Type" => "text/html" }, ["My simple empty app. Authentication is required {env['QUERY_STRING']}"]]
     end       
   end
   run welcome
