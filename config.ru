@@ -1,5 +1,3 @@
-require 'rack/lobster'
-
 map '/health' do
   health = proc do |env|
     [200, { "Content-Type" => "text/html" }, ["1"]]
@@ -7,13 +5,14 @@ map '/health' do
   run health
 end
 
-map '/lobster' do
-  run Rack::Lobster.new
-end
-
 map '/' do
   welcome = proc do |env|
-    [200, { "Content-Type" => "text/html" }, ["My simple empty app #{env['QUERY_STRING']}"]]
+    check_auth_id =  /code=(.*)\?state=authorized$/.match(env['QUERY_STRING'])
+    if check_auth_id then
+       [200, { "Content-Type" => "text/html" }, ["My simple empty app. Authorized id = #{check_auth_id[1]}"]]
+    else
+       [200, { "Content-Type" => "text/html" }, ["My simple empty app. Authentication is required"]]
+    end       
   end
   run welcome
 end
