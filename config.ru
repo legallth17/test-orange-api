@@ -13,7 +13,7 @@ map '/' do
     else
        client_id   = "6lkqGtxO0Cipb1aEVaAdEsglVkiSutwL"
        authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid&response_type=code&client_id=#{client_id}&prompt=login%20consent&state=ok&redirect_uri=http%3A%2F%2Fapp1-legallth.rhcloud.com"
-       [303, { "Location" => authent_url }, ["My simple empty app. Authentication is required #{env['QUERY_STRING']}"]]
+       [301, { "Location" => authent_url }, ["My simple empty app. Authentication is required #{env['QUERY_STRING']}"]]
     end       
   end
   run welcome
