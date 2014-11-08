@@ -5,6 +5,13 @@ map '/health' do
   run health
 end
 
+map '/info' do
+  health = proc do |env|
+    [200, { "Content-Type" => "text/html" }, ["Simple app to test Orange Partner API"]]
+  end
+  run health
+end
+
 map '/' do
   welcome = proc do |env|
     check_auth_id =  /code=(.*)\&state=ok$/.match(env['QUERY_STRING'])
