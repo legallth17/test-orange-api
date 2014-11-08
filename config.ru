@@ -1,4 +1,10 @@
+require 'rest_client'
+require "base64"
+
 use Rack::Session::Pool
+
+client_id     = "TXA4vos9G8YM1VGUnFAGU9nTW3fxcgbN"
+client_secret = "LAgmZaIGxKvOLHNk"
 
 map '/health' do
   health = proc do |env|
@@ -16,7 +22,6 @@ end
 
 map '/' do
   home = proc do |env|
-    client_id   = "TXA4vos9G8YM1VGUnFAGU9nTW3fxcgbN"
     authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid&response_type=code&prompt=login&client_id=#{client_id}&state=ok&redirect_uri=http%3A%2F%2Fapp1-legallth.rhcloud.com%2Flogin"
        [303, { "Cache-Control" => "no-cache, no-store, must-revalidate",
                "Pragma" => "no-cache",
@@ -31,8 +36,15 @@ map '/login' do
   login = proc do |env|
     check_auth_id =  /code=(.*)\&state=ok$/.match(env['QUERY_STRING'])
     if check_auth_id then
-       env['rack.session'][:auth_id]=check_auth_id[1]
-       [200, { "Content-Type" => "text/html" }, ["Authorized id = #{check_auth_id[1]}"]]
+       authorization_code = check_auth_id[1]
+#       env['rack.session'][:auth_id]=authorization_code
+       consumer_key = Base64.encode64(client_id + ":" + client_secret)
+       token = RestClient.post "https://api.orange.com/oauth/v2/token", 
+                          { :grant_type => "authorization_code",
+                            :code=authorization_code,
+                            :redirect_uri="http%3F%2F%2Fapp1-legallth.rhcloud.com%2Flogin" },
+                            :Authorization => consumer_key
+       [200, { "Content-Type" => "text/html" }, ["Authorized id = #{check_auth_id[1]} token= #{token}"]]
     else
        [200, { "Content-Type" => "text/html" }, ["Authorization failed"]]
     end       
