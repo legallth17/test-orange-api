@@ -15,8 +15,12 @@ end
 map '/' do
   home = proc do |env|
     client_id   = "TXA4vos9G8YM1VGUnFAGU9nTW3fxcgbN"
-    authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid&response_type=code&client_id=#{client_id}&state=ok&redirect_uri=http%3A%2F%2Fapp1-legallth.rhcloud.com%2Flogin"
-       [301, { "Location" => authent_url }, ["My simple empty app. Authentication is required #{env['QUERY_STRING']}"]]
+    authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid&response_type=code&prompt=login&client_id=#{client_id}&state=ok&redirect_uri=http%3A%2F%2Fapp1-legallth.rhcloud.com%2Flogin"
+       [303, { "Cache-Control" => "no-cache, no-store, must-revalidate",
+               "Pragma" => "no-cache",
+               "Expires" => "0",
+               "Location" => authent_url }, 
+             ["My simple empty app. Authentication is required #{env['QUERY_STRING']}"]]
   end
   run home
 end
