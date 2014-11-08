@@ -41,10 +41,10 @@ map '/login' do
        consumer_key = Base64.encode64(client_id + ":" + client_secret)
        puts "Authorization_code: #{authorization_code}" 
        token = RestClient.post "https://api.orange.com/oauth/v2/token", 
-                          { :grant_type    => "authorization_code",
-                            :code          => authorization_code,
-                            :redirect_uri  => "http%3F%2F%2Fapp1-legallth.rhcloud.com%2Flogin" },
-                            :Authorization => consumer_key
+                          {:params => { :grant_type    => "authorization_code",
+                                        :code          => authorization_code,
+                                        :redirect_uri  => "http%3F%2F%2Fapp1-legallth.rhcloud.com%2Flogin" }},
+                          :Authorization => consumer_key
        puts token
        [200, { "Content-Type" => "text/html" }, ["Authorized id = #{check_auth_id[1]} token= #{token}"]]
     else
