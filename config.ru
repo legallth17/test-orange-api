@@ -1,3 +1,5 @@
+use Rack::Session::Pool
+
 map '/health' do
   health = proc do |env|
     [200, { "Content-Type" => "text/html" }, ["1"]]
@@ -29,6 +31,7 @@ map '/login' do
   login = proc do |env|
     check_auth_id =  /code=(.*)\&state=ok$/.match(env['QUERY_STRING'])
     if check_auth_id then
+       env['rack.session'][:auth_id]=check_auth_id[1]
        [200, { "Content-Type" => "text/html" }, ["Authorized id = #{check_auth_id[1]}"]]
     else
        [200, { "Content-Type" => "text/html" }, ["Authorization failed"]]
