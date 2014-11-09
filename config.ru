@@ -41,6 +41,7 @@ map '/login' do
        consumer_key = Base64.encode64(client_id + ":" + client_secret)
        request = "curl -X POST -H \"Authorization: Basic #{consumer_key}\" -d \"grant_type=authorization_code&code=#{authorization_code}&redirect_uri=#{redirect_uri}\" \"https://api.orange.com/oauth/v2/token\""
        token = `#{request}`
+       puts "Authorization token: #{token}"
        [200, { "Content-Type" => "text/html" }, ["Autorization token has been fetched"]]
     else
        [200, { "Content-Type" => "text/html" }, ["Authorization failed"]]
