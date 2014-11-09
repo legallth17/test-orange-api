@@ -13,10 +13,12 @@ consumer_key = Base64.encode64(client_id + ":" + client_secret)
 uri  = URI('https://api.orange.com/oauth/v2/token')
 post = Net::HTTP::Post.new(uri.path)
 
-# header
-post['Authorization'] = "Basic #{consumer_key}"
 # parameters
 post.set_form_data(:grant_type => "authorization_code", :code => authorization_code, :redirect_uri  => "#{redirect_uri}")
+# header
+#post['Authorization'] = "Basic #{consumer_key}"
+
+post.basic_auth client_id, client_secret
 
 http = Net::HTTP.new(uri.host, uri.port)
 http.read_timeout = 1000
@@ -26,6 +28,8 @@ res = http.start do |http|
   http.request(post)
 end
 
+puts res.code
+puts res.body
 case res
 when Net::HTTPSuccess, Net::HTTPRedirection
   # OK
