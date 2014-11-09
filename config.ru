@@ -1,5 +1,5 @@
 require 'rest_client'
-require 'base64'
+require 'cgi'
 
 use Rack::Session::Pool
 
@@ -7,8 +7,7 @@ RestClient.log = 'stdout'
 
 client_id     = "TXA4vos9G8YM1VGUnFAGU9nTW3fxcgbN"
 client_secret = "LAgmZaIGxKvOLHNk"
-redirect_uri  = "http%3A%2F%2Fapp1-legallth.rhcloud.com%2Flogin"
-redirect_uri2  = "http://app1-legallth.rhcloud.com/login"
+redirect_uri  = "http://app1-legallth.rhcloud.com/login"
 
 map '/health' do
   health = proc do |env|
@@ -26,7 +25,7 @@ end
 
 map '/' do
   home = proc do |env|
-    authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid&response_type=code&client_id=#{client_id}&state=ok&redirect_uri=#{redirect_uri}"
+    authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid&response_type=code&client_id=#{client_id}&state=ok&redirect_uri=#{CGI.escape(redirect_uri)}"
        [303, { "Cache-Control" => "no-cache, no-store, must-revalidate",
                "Pragma" => "no-cache",
                "Expires" => "0",
@@ -44,7 +43,8 @@ map '/login' do
             newToken = RestClient::Resource.new('https://api.orange.com/oauth/v2/token', :user => client_id, :password => client_secret)
             newToken.post({ :grant_type => "authorization_code", :code => authorization_code, :redirect_uri  => "#{redirect_uri}" }) do |response, request, result| 
                 if response.code == 200 then
-                    [200, { "Content-Type" => "text/html" }, ["Autorization token has been fetched: #{response}"]]
+                    token = response.body
+                    [200, { "Content-Type" => "text/html" }, ["Autorization token has been fetched: #{token}"]]
                 else
                     [200, { "Content-Type" => "text/html" }, ["Error while getting token: #{response}"]]
                 end
