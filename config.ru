@@ -3,7 +3,7 @@ require 'base64'
 
 use Rack::Session::Pool
 
-RestClient.log=stdout
+RestClient.log = 'stdout'
 
 client_id     = "TXA4vos9G8YM1VGUnFAGU9nTW3fxcgbN"
 client_secret = "LAgmZaIGxKvOLHNk"
