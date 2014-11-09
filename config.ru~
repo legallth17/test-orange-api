@@ -44,7 +44,7 @@ map '/login' do
        newToken = RestClient::Resource.new('https://api.orange.com/oauth/v2/token', :user => client_id, :password => client_secret)
 	newToken.post({ :grant_type    => "authorization_code",
 	     :code          => authorization_code,
-             :redirect_uri  => "#{redirect_uri}" }) {|response, request, result| 
+             :redirect_uri  => "#{redirect_uri2}" }) {|response, request, result| 
 		if result.code == 200 then
 		       [200, { "Content-Type" => "text/html" }, ["Autorization token has been fetched: #{response}"]]
 		else
