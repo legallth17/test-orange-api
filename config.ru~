@@ -1,5 +1,5 @@
 require 'rest_client'
-require "base64"
+require 'base64'
 
 use Rack::Session::Pool
 
