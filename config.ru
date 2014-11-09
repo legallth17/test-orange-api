@@ -39,7 +39,7 @@ map '/login' do
     if check_auth_id then
        authorization_code = check_auth_id[1]
        consumer_key = Base64.encode64(client_id + ":" + client_secret)
-       request = "curl -X POST -H \"Authorization: Basic #{consumer_key}\" -d \"grant_type=authorization_code&code=#{autorization_code}&redirect_uri=#{redirect_uri}\" \"https://api.orange.com/oauth/v2/token\""
+       request = "curl -X POST -H \"Authorization: Basic #{consumer_key}\" -d \"grant_type=authorization_code&code=#{authorization_code}&redirect_uri=#{redirect_uri}\" \"https://api.orange.com/oauth/v2/token\""
        puts request
        [200, { "Content-Type" => "text/html" }, ["Request to get token: #{request}"]]
     else
