@@ -25,7 +25,7 @@ end
 
 map '/' do
   home = proc do |env|
-    authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid&response_type=code&client_id=#{client_id}&state=ok&redirect_uri=#{CGI.escape(redirect_uri)}"
+    authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid&prompt=login&response_type=code&client_id=#{client_id}&state=ok&redirect_uri=#{CGI.escape(redirect_uri)}"
        [303, { "Cache-Control" => "no-cache, no-store, must-revalidate",
                "Pragma" => "no-cache",
                "Expires" => "0",
