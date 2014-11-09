@@ -5,6 +5,7 @@ use Rack::Session::Pool
 
 client_id     = "TXA4vos9G8YM1VGUnFAGU9nTW3fxcgbN"
 client_secret = "LAgmZaIGxKvOLHNk"
+redirect_uri  = "http%3A%2F%2Fapp1-legallth.rhcloud.com%2Flogin"
 
 map '/health' do
   health = proc do |env|
@@ -22,7 +23,7 @@ end
 
 map '/' do
   home = proc do |env|
-    authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid&response_type=code&prompt=login&client_id=#{client_id}&state=ok&redirect_uri=http%3A%2F%2Fapp1-legallth.rhcloud.com%2Flogin"
+    authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid&response_type=code&prompt=login&client_id=#{client_id}&state=ok&redirect_uri=#{redirect_uri}"
        [303, { "Cache-Control" => "no-cache, no-store, must-revalidate",
                "Pragma" => "no-cache",
                "Expires" => "0",
@@ -38,8 +39,8 @@ map '/login' do
     if check_auth_id then
        authorization_code = check_auth_id[1]
        consumer_key = Base64.encode64(client_id + ":" + client_secret)
-       request = "curl -X POST -H \"Authorization: Basic #{consumer_key}\" -d \"grant_type=authorization_code&code=#{autorization_code}&redirect_uri=http://yourserver/page\" \"https://api.orange.com/oauth/v2/token\""
-
+       request = "curl -X POST -H \"Authorization: Basic #{consumer_key}\" -d \"grant_type=authorization_code&code=#{autorization_code}&redirect_uri=#{redirect_uri}\" \"https://api.orange.com/oauth/v2/token\""
+       puts request
        [200, { "Content-Type" => "text/html" }, ["Request to get token: #{request}"]]
     else
        [200, { "Content-Type" => "text/html" }, ["Authorization failed"]]
