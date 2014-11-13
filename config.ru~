@@ -46,8 +46,8 @@ map '/login' do
                 if response.code == 200 then
                     token = response.body
                     encoded_id_token = token['id_token'].split('.')[1]
-                    id_token = JSON.parse(encoded_id_token.tr('-_', '+/').unpack('m0').first)
-                    [200, { "Content-Type" => "text/html" }, ["Autorization token has been fetched: <br>Token data:#{token}<br>decoded id token:#{id_token}"]]
+                    #id_token = JSON.parse(encoded_id_token.tr('-_', '+/').unpack('m0').first)
+                    [200, { "Content-Type" => "text/html" }, ["Autorization token has been fetched: <br>Token data:#{token}<br>decoded id token:#{encoded_id_token}"]]
                 else
                     [200, { "Content-Type" => "text/html" }, ["Error while getting token: #{response}"]]
                 end
