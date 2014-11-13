@@ -27,7 +27,7 @@ end
 
 map '/' do
   home = proc do |env|
-    authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid&prompt=login&response_type=code&client_id=#{client_id}&state=ok&redirect_uri=#{CGI.escape(redirect_uri)}"
+    authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid%20profile&prompt=login&response_type=code&client_id=#{client_id}&state=ok&redirect_uri=#{CGI.escape(redirect_uri)}"
        [303, { "Cache-Control" => "no-cache, no-store, must-revalidate",
                "Pragma" => "no-cache",
                "Expires" => "0",
@@ -46,7 +46,9 @@ map '/login' do
             newToken.post({ :grant_type => "authorization_code", :code => authorization_code, :redirect_uri  => "#{redirect_uri}" }) do |response, request, result| 
                 if response.code == 200 then
                     puts response.body
+                    # token data is a json string
                     token = JSON.parse(response.body)
+                    # decode id_token which contains user id
                     encoded_id_token = token['id_token'].split('.')[1]
                     id_token = JSON.parse(Base64URL.decode(encoded_id_token))
                     [200, { "Content-Type" => "text/html" }, ["Autorization token has been fetched: <br>Token data:#{token}<br>decoded id token:#{id_token}"]]
