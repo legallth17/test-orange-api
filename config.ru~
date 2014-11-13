@@ -1,5 +1,7 @@
 require 'rest_client'
 require 'cgi'
+require 'base64url'
+require 'json'
 
 use Rack::Session::Pool
 
@@ -44,7 +46,9 @@ map '/login' do
             newToken.post({ :grant_type => "authorization_code", :code => authorization_code, :redirect_uri  => "#{redirect_uri}" }) do |response, request, result| 
                 if response.code == 200 then
                     token = response.body
-                    [200, { "Content-Type" => "text/html" }, ["Autorization token has been fetched: #{token}"]]
+                    encoded_id_token = token['id_token'].split('.')[1]
+                    id_token = JSON.parse(Base64URL.decode(endoded_id_token)
+                    [200, { "Content-Type" => "text/html" }, ["Autorization token has been fetched: <br>Token data:#{token}<br>decoded id token:#{id_token}"]]
                 else
                     [200, { "Content-Type" => "text/html" }, ["Error while getting token: #{response}"]]
                 end
