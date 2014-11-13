@@ -1,6 +1,7 @@
 require 'rest_client'
 require 'cgi'
 require 'json'
+require 'base64url'
 
 use Rack::Session::Pool
 
@@ -47,8 +48,7 @@ map '/login' do
                     puts response.body
                     token = JSON.parse(response.body)
                     encoded_id_token = token['id_token'].split('.')[1]
-                    puts "encode_id_token #{encode_id_token}"
-                    id_token = JSON.parse(encoded_id_token.tr('-_', '+/').unpack('m0').first)
+                    id_token = JSON.parse(Base64URL.decode(encoded_id_token))
                     [200, { "Content-Type" => "text/html" }, ["Autorization token has been fetched: <br>Token data:#{token}<br>decoded id token:#{id_token}"]]
                 else
                     [200, { "Content-Type" => "text/html" }, ["Error while getting token: #{response}"]]
