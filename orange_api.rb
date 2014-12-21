@@ -27,14 +27,21 @@ class OrangeApi
 	end
 
 	def authorization_status(query_string)
-		# error=access_denied&error_description=consent denied&state=ok
-		authorization = { :error => nil, :error_description => nil, :authorization_code => nil}
+		authorization = {}
+        # code=xxxxxx&state=ok
         check_auth_code =  /code=(.*)\&state=ok$/.match(query_string)
-        authorization[:code] = check_auth_code[1] if check_auth_code
+        if check_auth_code then
+        	authorization[:code] = check_auth_code[1]
+        	return authorization
+        end
+		# error=access_denied&error_description=consent denied&state=ok
         check_auth_error =  /error=(.*)\&error_description=(.*)\&state=ok$/.match(query_string)
-        authorization[:error] = check_auth_error[1]
-        authorization[:error_description] = check_auth_error[2]
-        authorization
+        if check_auth_error then
+        	authorization[:error] = check_auth_error[1]
+        	authorization[:error_description] = check_auth_error[2]
+        	return authorization
+        end
+        {:error => "no_authorization_code", :error_description => "unable to extract code from query string #{query_string}"}
 	end
 
 	def authorization_code(query_string)
