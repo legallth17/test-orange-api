@@ -36,11 +36,12 @@ end
 map '/login' do
     login = proc do |env|
         authorization = orange_api.authorization_status env['QUERY_STRING']
-        if authorization[:error] then
-          return [200, { "Content-Type" => "text/html" }, ["User authorization failed: error:#{authorization[:error]}: #{authorization[:error_description]}"]]
+        if authorization[:code] then
+          token = orange_api.get_token authorization[:code]
+          [200, { "Content-Type" => "text/html" }, ["Token data:#{token}"]]
+        else
+          [200, { "Content-Type" => "text/html" }, ["User authorization failed: #{authorization}"]]
         end
-        token = orange_api.get_token authorization[:code]
-        [200, { "Content-Type" => "text/html" }, ["Token data:#{token}"]]
     end
     run login
 end
