@@ -33,7 +33,7 @@ class OrangeApi
         authorization[:code] = check_auth_code[1] if check_auth_code
         check_auth_error =  /error=(.*)\&error_description=(.*)\&state=ok$/.match(query_string)
         authorization[:error] = check_auth_error[1]
-        authorization[:error_description = check_auth_error[2]
+        authorization[:error_description] = check_auth_error[2]
         authorization
 	end
 
