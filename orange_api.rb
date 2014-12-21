@@ -26,9 +26,20 @@ class OrangeApi
 		"https://api.orange.com/oauth/v2/authorize?scope=openid%20profile&prompt=login&response_type=code&client_id=#{@client_id}&state=ok&redirect_uri=#{CGI.escape(@redirect_uri)}"
 	end
 
+	def authorization_status(query_string)
+		# error=access_denied&error_description=consent denied&state=ok
+		authorization = { :error => nil, :error_description => nil, :authorization_code => nil}
+        check_auth_code =  /code=(.*)\&state=ok$/.match(query_string)
+        authorization[:code] = check_auth_code[1] if check_auth_code
+        check_auth_error =  /error=(.*)\&error_description=(.*)\&state=ok$/.match(query_string)
+        authorization[:error] = check_auth_error[1]
+        authorization[:error_description = check_auth_error[2]
+        authorization
+	end
+
 	def authorization_code(query_string)
         check_auth_id =  /code=(.*)\&state=ok$/.match(query_string)
-        raise StandardError, "authorization_code not found in query: #{query_string}" unless check_auth_id
+        return nil unless check_auth_id
         check_auth_id[1]
 	end
 
