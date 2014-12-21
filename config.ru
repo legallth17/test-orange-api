@@ -1,15 +1,11 @@
-require 'rest_client'
-require 'cgi'
-require 'json'
-require 'base64url'
+require 'orange_api'
 
 use Rack::Session::Pool
 
-RestClient.log = 'stdout'
-
-client_id     = "TXA4vos9G8YM1VGUnFAGU9nTW3fxcgbN"
-client_secret = "LAgmZaIGxKvOLHNk"
-redirect_uri  = "http://app1-legallth.rhcloud.com/login"
+orange_api = OrangeApi.new
+orange_api.client_id     = "TXA4vos9G8YM1VGUnFAGU9nTW3fxcgbN"
+orange_api.client_secret = "LAgmZaIGxKvOLHNk"
+orange_api.redirect_uri  = "http://app1-legallth.rhcloud.com/login"
 
 map '/health' do
   health = proc do |env|
@@ -27,11 +23,11 @@ end
 
 map '/' do
   home = proc do |env|
-    authent_url = "https://api.orange.com/oauth/v2/authorize?scope=openid%20profile&prompt=login&response_type=code&client_id=#{client_id}&state=ok&redirect_uri=#{CGI.escape(redirect_uri)}"
+        # redirect to orange api authent_url
        [303, { "Cache-Control" => "no-cache, no-store, must-revalidate",
                "Pragma" => "no-cache",
                "Expires" => "0",
-               "Location" => authent_url }, 
+               "Location" => orange_api.authent_url }, 
              ["My simple empty app. Authentication is required #{env['QUERY_STRING']}"]]
   end
   run home
@@ -39,26 +35,9 @@ end
 
 map '/login' do
     login = proc do |env|
-        check_auth_id =  /code=(.*)\&state=ok$/.match(env['QUERY_STRING'])
-        if check_auth_id then
-            authorization_code = check_auth_id[1]
-            newToken = RestClient::Resource.new('https://api.orange.com/oauth/v2/token', :user => client_id, :password => client_secret)
-            newToken.post({ :grant_type => "authorization_code", :code => authorization_code, :redirect_uri  => "#{redirect_uri}" }) do |response, request, result| 
-                if response.code == 200 then
-                    puts response.body
-                    # token data is a json string
-                    token = JSON.parse(response.body)
-                    # decode id_token which contains user id
-                    encoded_id_token = token['id_token'].split('.')[1]
-                    id_token = JSON.parse(Base64URL.decode(encoded_id_token))
-                    [200, { "Content-Type" => "text/html" }, ["Autorization token has been fetched: <br>Token data:#{token}<br>decoded id token:#{id_token}"]]
-                else
-                    [200, { "Content-Type" => "text/html" }, ["Error while getting token: #{response}"]]
-                end
-            end
-        else
-            [200, { "Content-Type" => "text/html" }, ["Unexpected parameters in request: #{env['QUERY_STRING']}"]]
-        end
+        authorization_code = orange_api.authorization_code env['QUERY_STRING']
+        token = orange_api.get_token authorization_code
+        [200, { "Content-Type" => "text/html" }, ["Token data:#{token}"]]
     end
     run login
 end
