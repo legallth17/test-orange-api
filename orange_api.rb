@@ -73,4 +73,8 @@ class OrangeApi
 		JSON.parse(Base64URL.decode(encoded_id_token))
 	end
 
+	def get_user_data(token)
+		RestClient.get('https://api.orange.com/openidconnect/v1/userinfo/',{ 'Authorization' => "Bearer #{token['access_token']}" })
+	end
+
 end

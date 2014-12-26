@@ -38,7 +38,8 @@ map '/login' do
         authorization = orange_api.authorization_status env['QUERY_STRING']
         if authorization[:code] then
           token = orange_api.get_token authorization[:code]
-          [200, { "Content-Type" => "text/html" }, ["Token data:#{token}"]]
+          user_data = orange_api.get_user_data token
+          [200, { "Content-Type" => "text/html" }, ["Token data:#{token}<br>User data:#{user_data}"]]
         else
           [200, { "Content-Type" => "text/html" }, ["User authorization failed: #{authorization}"]]
         end
